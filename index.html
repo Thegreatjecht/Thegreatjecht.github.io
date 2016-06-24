@@ -1,38 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Shouzou Kaga</title>
+
+<script type="text/javascript" src="assets/js/paper.js"></script>
+<!-- Define inlined PaperScript associate it with myCanvas -->
+<script type="text/paperscript" canvas="myCanvas">
+var width, height, center;
+var points = 10;
+var smooth = true;
+var path = new Path();
+var mousePos = view.center / 2;
+var pathHeight = mousePos.y;
+path.fillColor = 'black';
+initializePath();
+
+function initializePath() {
+  center = view.center;
+  width = view.size.width;
+  height = view.size.height / 2;
+  path.segments = [];
+  path.add(view.bounds.bottomLeft);
+  for (var i = 1; i < points; i++) {
+    var point = new Point(width / points * i, center.y);
+    path.add(point);
+  }
+  path.add(view.bounds.bottomRight);
+  path.fullySelected = true;
+}
+
+function onFrame(event) {
+  pathHeight += (center.y - mousePos.y - pathHeight) / 10;
+  for (var i = 1; i < points; i++) {
+    var sinSeed = event.count + (i + i % 10) * 100;
+    var sinHeight = Math.sin(sinSeed / 200) * pathHeight;
+    var yPos = Math.sin(sinSeed / 100) * sinHeight + height;
+    path.segments[i].point.y = yPos;
+  }
+  if (smooth)
+    path.smooth({ type: 'continuous' });
+}
+
+function onMouseMove(event) {
+  mousePos = event.point;
+}
+
+function onMouseDown(event) {
+  smooth = !smooth;
+  if (!smooth) {
+    // If smooth has been turned off, we need to reset
+    // the handles of the path:
+    for (var i = 0, l = path.segments.length; i < l; i++) {
+      var segment = path.segments[i];
+      segment.handleIn = segment.handleOut = null;
+    }
+  }
+}
+
+// Reposition the path whenever the window is resized:
+function onResize(event) {
+  initializePath();
+}
+
+
+</script>
+
+<title>Joshua Mailey</title>
+<link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css">
 </head>
 <body>
+<ul class="navbar">
+  <li class="navitem"> <a href="page.html"> Go to Hobbies </a>
+  <li class="navitem"> <a href="paper.html"> Go to Interests </a> </li>
+</ul>
 
-<h1>Shouzou Kaga!!!!</h1>
-Shouzou Kaga is the creator of the Fire Emblem series and a game designer who worked at Intellegent Systems. In 1999 he left Intellegent Systems to found Tirnanog. Tirnanog also developed a similar Series called the Tear Ring Saga. In 2015 he announced a new game called Vestaria Saga.
-<br><br>
+<div id="homepage">
+<canvas id="myCanvas" width="2000px" height="650px"></canvas>
+</div>
 
-<a href="http://fireemblem.wikia.com/wiki/Shouzou_Kaga"> Click to go to Wiki</a>
-<br><br>
+<div id="text">
+<h1>Home</h1>
+Joshua Mailey is a 13-year old student at Price Middle School.
+</div>
 
-<img src="http://vignette1.wikia.nocookie.net/fireemblem/images/0/0c/Shouzou_Kaga_portrait_1.png/revision/latest?cb=20160501005225"> </img>
-
-</body>
-
-
-  <body>
-
-    <h1 style="color:darkblue; font-size:30px; font-family: papyrus">THE GREAT PAPYRUS</hl>
-
-    <hr color="darkred" size="10px" width="75%" align="left">
-
-    <h2 style="color:limegreen"> I like to play Final Fantasy.<br><br><br></h2>
-
-    <h3>Final Fantasy!!!</h3>
-    <img src="https://tetracross.files.wordpress.com/2013/07/4973422387_05d7ff10c8_z.jpg" width="200px" height="100px" /></img>
-    <p style="color:grey; font-size:20px">My favorite character is Bahamut!</p>
-    <img src="http://pre14.deviantart.net/5ea5/th/pre/f/2011/314/d/f/bahamut_ffviii_02_by_candycanecroft-d4fpqeg.png" width="250" hieght="250"></img>
-
-    <a href="page.html">Click here to go to another page!</a>
-
-    <a href="paper.html">Click here to go to new page!</a>
 
   </body>
 
